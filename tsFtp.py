@@ -3,12 +3,12 @@ import os
 import socket
 
 HOST='localhost'
-DIRN='f:/share'
-FILE='ss.txt'
+DIRN='share'
+FILE=r'ss.txt'   #文件格式
 
 def main():
     try:
-        f=ftplib.FTP(HOST)
+        f=ftplib.FTP(HOST)   #和ftp服务器建立连接
     except(socket.error,socket.gaierror) as e:
         print('error:cannot reach "%s"'%HOST)
         return
@@ -16,9 +16,9 @@ def main():
     print(f.getwelcome())
 
     try:
-        f.login('shanice','ss123')
+        f.login('shanice','ss123')  #登陆
     except ftplib.error_perm:
-        print('error:cannot login anonymously')
+        print('error:cannot login ')
         f.quit()
         return
     print('*** logged ')
@@ -28,8 +28,9 @@ def main():
         list = f.nlst()  # 获得目录列表
         for name in list:
             print(name)
-        #f.mkd('f:/ss')
-        f.cwd('f:/share')
+        #f.mkd('ss')
+        #f.rmd('ss')
+        f.cwd(DIRN)      #切换ftp服务器的工作目录
     except ftplib.error_perm:
         print('error:cannot CD to "%s"'%DIRN)
         f.quit()
@@ -37,12 +38,12 @@ def main():
     print('*** changed to "%s" folder'%DIRN)
 
     try:
-        f.retrbinary('RETR %s'%FILE,open(FILE,'wb').write)
+        f.retrbinary('RETR %s'%FILE,open('s.txt','wb').write)    #从服务器下载文件
     except ftplib.error_perm:
         print('error:cannot read file "%s"'%FILE)
         os.unlink(FILE)
     else:
-        print('*** download "%s" to CWD'%FILE)
+        print('*** download "%s" from CWD'%FILE)
     f.quit()
 
 if __name__=='__main__':
